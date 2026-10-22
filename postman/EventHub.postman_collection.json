@@ -1,0 +1,60 @@
+﻿{
+  "info": {
+    "name": "EventHub Ticket Booking API",
+    "description": "Demo API requests. Login first and copy the token into the bearerToken collection variable.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3001" },
+    { "key": "bearerToken", "value": "" },
+    { "key": "ticketId", "value": "" },
+    { "key": "eventId", "value": "event-1" }
+  ],
+  "item": [
+    {
+      "name": "Login attendee",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"attendee@eventhub.test\",\n  \"password\": \"password123\"\n}" },
+        "url": "{{baseUrl}}/api/v1/auth/login"
+      }
+    },
+    {
+      "name": "List events (public)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/events" }
+    },
+    {
+      "name": "Book tickets",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{bearerToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"quantity\": 2\n}" },
+        "url": "{{baseUrl}}/api/v1/tickets"
+      }
+    },
+    {
+      "name": "My tickets",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{bearerToken}}" }],
+        "url": "{{baseUrl}}/api/v1/tickets/my"
+      }
+    },
+    {
+      "name": "Update ticket status",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{bearerToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"status\": \"used\"\n}" },
+        "url": "{{baseUrl}}/api/v1/tickets/{{ticketId}}/status"
+      }
+    }
+  ]
+}
