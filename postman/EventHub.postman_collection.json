@@ -1,18 +1,19 @@
-﻿{
+{
   "info": {
     "name": "EventHub Ticket Booking API",
-    "description": "Demo API requests. Login first and copy the token into the bearerToken collection variable.",
+    "description": "Run Login, then List events to set the collection token and event ID automatically.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:3001" },
     { "key": "bearerToken", "value": "" },
     { "key": "ticketId", "value": "" },
-    { "key": "eventId", "value": "event-1" }
+    { "key": "eventId", "value": "" }
   ],
   "item": [
     {
       "name": "Login attendee",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const data = pm.response.json();", "if (data.token) pm.collectionVariables.set('bearerToken', data.token);"] } }],
       "request": {
         "method": "POST",
         "header": [{ "key": "Content-Type", "value": "application/json" }],
@@ -22,10 +23,12 @@
     },
     {
       "name": "List events (public)",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const data = pm.response.json();", "const available = data.events?.find((event) => event.ticketsAvailable > 0);", "if (available) pm.collectionVariables.set('eventId', available.id);"] } }],
       "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/events" }
     },
     {
       "name": "Book tickets",
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const data = pm.response.json();", "if (data.ticket?.id) pm.collectionVariables.set('ticketId', data.ticket.id);"] } }],
       "request": {
         "method": "POST",
         "header": [
@@ -37,7 +40,19 @@
       }
     },
     {
-      "name": "My tickets",
+      "name": "Reject quantity above remaining availability (expect 400)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{bearerToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"quantity\": 999999\n}" },
+        "url": "{{baseUrl}}/api/v1/tickets"
+      }
+    },
+    {
+      "name": "My tickets (populated)",
       "request": {
         "method": "GET",
         "header": [{ "key": "Authorization", "value": "Bearer {{bearerToken}}" }],

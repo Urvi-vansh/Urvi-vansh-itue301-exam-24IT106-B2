@@ -1,1 +1,0 @@
-import{R as e}from"./index-DMwpcsBw.js";function r(){return e.createElement("section",{className:"page-section"},e.createElement("p",{className:"eyebrow"},"EVENT MANAGEMENT"),e.createElement("h2",null,"Organizer Panel"),e.createElement("p",null,"Your organizer workspace is ready."))}export{r as default};

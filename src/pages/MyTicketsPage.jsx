@@ -38,13 +38,19 @@ export default function MyTicketsPage() {
       {!loading && error && <p className="request-error" role="alert">{error}</p>}
       {!loading && !error && (tickets.length === 0
         ? <p>You have not booked any tickets yet.</p>
-        : <div className="ticket-list">{tickets.map((ticket) => (
-          <article className="ticket-entry ticket-summary" key={ticket.id}>
-            <h3>{ticket.eventTitle}</h3>
-            <p>Quantity booked: {ticket.quantity}</p>
-            <p>Status: <span className="ticket-status">{ticket.status}</span></p>
-          </article>
-        ))}</div>)}
+        : <div className="ticket-list">{tickets.map((ticket) => {
+          const event = ticket.eventId;
+          return (
+            <article className="ticket-entry ticket-summary" key={ticket.id}>
+              <h3>{event?.title ?? 'Event unavailable'}</h3>
+              {event?.date && <p>Date: {new Date(event.date).toLocaleDateString()}</p>}
+              {event?.venue && <p>Venue: {event.venue}</p>}
+              <p>Quantity booked: {ticket.quantity}</p>
+              <p>Status: <span className="ticket-status">{ticket.status}</span></p>
+              {ticket.attendeeId?.name && <p>Booked by: {ticket.attendeeId.name}</p>}
+            </article>
+          );
+        })}</div>)}
     </section>
   );
 }
